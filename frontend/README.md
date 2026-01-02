@@ -1,16 +1,33 @@
-# React + Vite
+**🚀 LMS-AI: Campus-to-Corporate Ecosystem 🎓**
+LMS-AI is a unified training and assessment platform designed to bridge the gap between college education and corporate employability. It combines a robust Coding Sandbox with an AI-driven Soft Skills Suite to create personalized learning journeys.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**🌟 Key Pillars**
+💻 1. Technical Excellence (Coding Platform)
+Auto-Grading Engine: Real-time code execution and evaluation (supports multiple languages).
 
-Currently, two official plugins are available:
+Question Bank: Categorized technical challenges ranging from Basic to Advanced.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Learning Paths: Structured modules to take students from "Hello World" to "Production Ready."
 
-## React Compiler
+🤖 2. AI Soft Skills Trainer
+Powered by Google Gemini-2.0-Flash, the platform evaluates:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+✍️ Writing: Grammar, tone, and professional coherence.
 
-## Expanding the ESLint configuration
+📖 Reading: Comprehension and nuance detection.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+🗣️ Speaking: (In Development) Fluency and confidence analysis via transcript processing.
+
+📊 3. Deep Analytics & Reports
+Individual Reports: Multi-dimensional feedback on Technical, Soft, and Behavioral skills.
+
+Institutional Dashboards: College-level performance tracking for Admins and Faculty.
+
+Placement Readiness: Predictive alerts for students ready for the workforce.
+
+🎮 4. Engagement & Gamification
+Leaderboards: Healthy competition across colleges.
+
+Badges: Earn badges like Ace Coder, Fast Learner, and Consistency King.
+
+Points System: RPG-style progression for completing lessons and passing exams.
