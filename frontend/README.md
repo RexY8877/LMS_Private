@@ -1,4 +1,5 @@
 **🚀 LMS-AI: Campus-to-Corporate Ecosystem 🎓**
+
 LMS-AI is a unified training and assessment platform designed to bridge the gap between college education and corporate employability. It combines a robust Coding Sandbox with an AI-driven Soft Skills Suite to create personalized learning journeys.
 
 **🌟 Key Pillars**
