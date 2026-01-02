@@ -1,7 +1,7 @@
 const express = require("express");
 const { Exam, Submission } = require("../models/Exam");
 const { protect, trainerOnly } = require("../middleware/authMiddleware");
-const { gradeSubjectiveQuestion } = require("../services/aiGrader");
+const { gradeSubjectiveQuestion } = require("../services/AiGrader");
 
 const router = express.Router();
 
