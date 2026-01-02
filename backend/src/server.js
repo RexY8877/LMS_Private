@@ -23,6 +23,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
 app.use("/api/coding", require("./routes/codingRoutes"));
 app.use("/api/softskills", require("./routes/softSkillsRoutes"));
+app.use("/api/reports", require("./routes/reportsRoutes"));
 
 
 const PORT = process.env.PORT || 5000;
