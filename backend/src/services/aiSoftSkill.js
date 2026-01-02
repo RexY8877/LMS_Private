@@ -1,24 +1,25 @@
+// backend/src/services/aiSoftSkill.js
 const { GoogleGenAI } = require("@google/genai");
-
 const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-async function analyzeWriting(inputText) {
-  const prompt = `
-Analyze this writing sample for grammar, coherence, structure, vocabulary and tone.
-Return JSON with fields:
-grammar, coherence, structure, vocabulary, tone (0-10),
-and feedback string.
-Text:
-${inputText}
-`;
-  const result = await client.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    generationConfig: { responseMimeType: "application/json" },
-  });
+async function analyzeSoftSkill(type, inputText, promptContext) {
+  const model = client.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  return JSON.parse(result.response.candidates[0].content.parts[0].text);
+  const systemPrompts = {
+    writing: "Analyze writing for grammar, tone, and professional structure.",
+    reading: "Analyze if the student understood the core concepts and nuances of the provided text.",
+    speaking: "Analyze the transcript for fluency, confidence, and filler word usage (ums/ahs)."
+  };
+
+  const prompt = `
+    Task: ${systemPrompts[type]}
+    Context: ${promptContext || "General professional communication"}
+    Student Text: ${inputText}
+    Return ONLY JSON with scores (0-10) for: clarity, professionalism, and logic, plus a 'feedback' string.
+  `;
+
+  const result = await model.generateContent(prompt);
+  return JSON.parse(result.response.text());
 }
 
-// For reading & speaking you can create similar helpers later.
-module.exports = { analyzeWriting };
+module.exports = { analyzeSoftSkill };
