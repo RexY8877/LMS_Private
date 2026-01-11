@@ -1,32 +1,30 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
-const connectDB = require('./config/db');
-
-dotenv.config();
-connectDB();
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-// static file serving for uploads (we'll create these folders later)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// API routes (you'll create these files next)
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/courses', require('./routes/courseRoutes'));
-app.use('/api/exams', require('./routes/examRoutes'));
-app.use('/api/upload', require('./routes/uploadRoutes'));
-app.use('/api/stats', require('./routes/statsRoutes'));
-app.use("/api/coding", require("./routes/codingRoutes"));
-app.use("/api/softskills", require("./routes/softSkillsRoutes"));
-app.use("/api/reports", require("./routes/reportsRoutes"));
-
+// backend/server.js
+require('dotenv').config();
+const http = require('http');
+const app = require('./src/app');
+const connectDB = require('./src/config/db');
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+// Connect to MongoDB
+connectDB()
+  .then(() => {
+    const server = http.createServer(app);
 
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    });
+
+    // Handle graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received. Shutting down gracefully...');
+      server.close(() => {
+        console.log('Server closed.');
+        process.exit(0);
+      });
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB connection failed:', err);
+    process.exit(1);
+  });

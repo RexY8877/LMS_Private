@@ -1,3 +1,4 @@
+const { runCodeAgainstTests } = require('../services/judgeService');
 const { awardProgress } = require("../services/progressService");
 
 async function submitCode(req, res) {

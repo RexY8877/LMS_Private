@@ -2,7 +2,7 @@ const express = require("express");
 const CodingQuestion = require("../models/CodingQuestion");
 const CodingSubmission = require("../models/CodingSubmission");
 const { protect, trainerOnly } = require("../middleware/authMiddleware");
-const { runCodeAgainstTests } = require("../services/codeJudge");
+const { runCodeAgainstTests } = require("../services/judgeService");
 
 const router = express.Router();
 
