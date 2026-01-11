@@ -1,78 +1,68 @@
-// frontend/src/components/SoftSkills/ReadingTest.jsx
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // For API calls to backend
+// frontend/src/components/SoftSkills/SpeakingTest.jsx
+import React, { useState, useEffect, useCallback } from 'react'; // Added useCallback
+import { ReactMic } from 'react-mic';
+import axios from 'axios';
 
-const ReadingTest = () => {
-  const [passage, setPassage] = useState(''); // Fetch or hardcode passage
-  const [questions, setQuestions] = useState([]); // Array of questions
-  const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes timer
+const SpeakingTest = () => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [prompt, setPrompt] = useState('');
   const [score, setScore] = useState(null);
-  const [isTestStarted, setIsTestStarted] = useState(false);
 
+  // Fetch prompt
   useEffect(() => {
-    // Fetch passage and questions from backend (e.g., pre-defined or AI-generated)
-    const fetchTest = async () => {
+    const fetchPrompt = async () => {
       try {
-        const res = await axios.get('/api/softskills/reading/test');
-        setPassage(res.data.passage);
-        setQuestions(res.data.questions);
+        const res = await axios.get('/api/softskills/speaking/prompt');
+        setPrompt(res.data.prompt);
       } catch (error) {
-        console.error('Error fetching reading test:', error);
+        console.error('Error fetching prompt:', error);
       }
     };
-    fetchTest();
+    fetchPrompt();
   }, []);
 
-  useEffect(() => {
-    let timer;
-    if (isTestStarted && timeLeft > 0) {
-      timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0) {
-      handleSubmit();
-    }
-    return () => clearInterval(timer);
-  }, [isTestStarted, timeLeft]);
+  const startRecording = () => setIsRecording(true);
 
-  const handleStart = () => setIsTestStarted(true);
+  const stopRecording = () => setIsRecording(false);
 
-  const handleAnswerChange = (qId, answer) => {
-    setAnswers({ ...answers, [qId]: answer });
+  const onStop = (recordedBlob) => {
+    setAudioBlob(recordedBlob);
   };
 
-  const handleSubmit = async () => {
+  // Move handleSubmit to top, wrap in useCallback (no timer here, per requirements)
+  const handleSubmit = useCallback(async () => {
+    if (!audioBlob) return;
+    const formData = new FormData();
+    formData.append('audio', audioBlob.blob, 'speaking.wav');
+
     try {
-      const res = await axios.post('/api/softskills/reading/submit', { answers });
-      setScore(res.data.score); // Includes comprehension, speed, etc.
+      const res = await axios.post('/api/softskills/speaking/submit', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setScore(res.data.score); // { pronunciation, fluency, etc. }
     } catch (error) {
-      console.error('Error submitting reading test:', error);
+      console.error('Submission error:', error);
     }
-  };
+  }, [audioBlob]); // Depend on audioBlob
 
   return (
     <div>
-      <h2>Reading Skills Assessment</h2>
-      {!isTestStarted ? (
-        <button onClick={handleStart}>Start Test</button>
-      ) : (
-        <>
-          <p>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</p>
-          <div>{passage}</div>
-          {questions.map((q, i) => (
-            <div key={i}>
-              <p>{q.text}</p>
-              <input
-                type="text"
-                onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-              />
-            </div>
-          ))}
-          <button onClick={handleSubmit}>Submit</button>
-        </>
-      )}
-      {score && <p>Your Score: {score.comprehension} (Comprehension), {score.speed} (Speed)</p>}
+      <h2>Speaking Skills Assessment</h2>
+      <p>Prompt: {prompt}</p>
+      <button onClick={startRecording} disabled={isRecording}>Start Recording</button>
+      <button onClick={stopRecording} disabled={!isRecording}>Stop Recording</button>
+      <ReactMic
+        record={isRecording}
+        className="sound-wave"
+        onStop={onStop}
+        strokeColor="#000000"
+        backgroundColor="white"
+      />
+      <button onClick={handleSubmit}>Submit Audio</button>
+      {score && <p>Your Score: {score.pronunciation} (Pronunciation), {score.fluency} (Fluency)</p>}
     </div>
   );
 };
 
-export default ReadingTest; // Fixed: Added export for React Refresh
+export default SpeakingTest;

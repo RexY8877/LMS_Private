@@ -1,17 +1,17 @@
 // frontend/src/components/SoftSkills/ReadingTest.jsx
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // For API calls to backend
+import React, { useState, useEffect, useCallback } from 'react'; // Added useCallback
+import axios from 'axios';
 
 const ReadingTest = () => {
-  const [passage, setPassage] = useState(''); // Fetch or hardcode passage
-  const [questions, setQuestions] = useState([]); // Array of questions
+  const [passage, setPassage] = useState('');
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes timer
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
   const [score, setScore] = useState(null);
   const [isTestStarted, setIsTestStarted] = useState(false);
 
+  // Fetch test data (move before useEffect for clarity)
   useEffect(() => {
-    // Fetch passage and questions from backend (e.g., pre-defined or AI-generated)
     const fetchTest = async () => {
       try {
         const res = await axios.get('/api/softskills/reading/test');
@@ -24,6 +24,17 @@ const ReadingTest = () => {
     fetchTest();
   }, []);
 
+  // Move handleSubmit BEFORE the timer useEffect, and wrap in useCallback
+  const handleSubmit = useCallback(async () => {
+    try {
+      const res = await axios.post('/api/softskills/reading/submit', { answers });
+      setScore(res.data.score); // { comprehension, speed, etc. }
+    } catch (error) {
+      console.error('Error submitting reading test:', error);
+    }
+  }, [answers]); // Depend on answers (state it uses)
+
+  // Timer useEffect (now after handleSubmit)
   useEffect(() => {
     let timer;
     if (isTestStarted && timeLeft > 0) {
@@ -32,21 +43,12 @@ const ReadingTest = () => {
       handleSubmit();
     }
     return () => clearInterval(timer);
-  }, [isTestStarted, timeLeft]);
+  }, [isTestStarted, timeLeft, handleSubmit]); // Added handleSubmit to deps
 
   const handleStart = () => setIsTestStarted(true);
 
   const handleAnswerChange = (qId, answer) => {
     setAnswers({ ...answers, [qId]: answer });
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const res = await axios.post('/api/softskills/reading/submit', { answers });
-      setScore(res.data.score); // Includes comprehension, speed, etc.
-    } catch (error) {
-      console.error('Error submitting reading test:', error);
-    }
   };
 
   return (
@@ -75,4 +77,4 @@ const ReadingTest = () => {
   );
 };
 
-export default ReadingTest; // Fixed: Added export for React Refresh
+export default ReadingTest;
