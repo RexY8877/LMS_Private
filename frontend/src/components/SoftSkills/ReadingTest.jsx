@@ -36,9 +36,15 @@ const ReadingTest = () => {
 
   // Timer useEffect (now after handleSubmit)
   useEffect(() => {
-    let timer;
-    if (isTestStarted && timeLeft > 0) {
-      timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+  let timer;
+  if (isTestStarted && timeLeft > 0) {
+    timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+  } else if (timeLeft === 0) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    handleSubmit();
+  }
+  return () => clearInterval(timer);
+}, [isTestStarted, timeLeft, handleSubmit]);
     } else if (timeLeft === 0) {
       handleSubmit();
     }
