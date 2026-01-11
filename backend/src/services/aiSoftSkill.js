@@ -1,25 +1,21 @@
 // backend/src/services/aiSoftSkill.js
-const { GoogleGenAI } = require("@google/genai");
-const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-async function analyzeSoftSkill(type, inputText, promptContext) {
-  const model = client.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-  const systemPrompts = {
-    writing: "Analyze writing for grammar, tone, and professional structure.",
-    reading: "Analyze if the student understood the core concepts and nuances of the provided text.",
-    speaking: "Analyze the transcript for fluency, confidence, and filler word usage (ums/ahs)."
+async function analyzeSoftSkill(type, text) {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  
+  const prompts = {
+    speaking: `Analyze the following interview transcript for fluency, confidence, and clarity. 
+               Provide a score out of 10 and 2 sentences of professional feedback. 
+               Return strictly JSON: {"score": 8, "feedback": "..."}
+               Transcript: "${text}"`,
+    writing: `Analyze this email/essay for professional tone and grammar...`
   };
 
-  const prompt = `
-    Task: ${systemPrompts[type]}
-    Context: ${promptContext || "General professional communication"}
-    Student Text: ${inputText}
-    Return ONLY JSON with scores (0-10) for: clarity, professionalism, and logic, plus a 'feedback' string.
-  `;
-
-  const result = await model.generateContent(prompt);
-  return JSON.parse(result.response.text());
+  const result = await model.generateContent(prompts[type]);
+  const response = await result.response;
+  return JSON.parse(response.text());
 }
 
 module.exports = { analyzeSoftSkill };
