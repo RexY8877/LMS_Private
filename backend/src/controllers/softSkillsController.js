@@ -1,5 +1,5 @@
 // backend/src/controllers/softSkillsController.js
-const SoftSkillAssessment = require('../models/SoftSkillAssessment');
+const SoftSkillAssessment = require('../models/SoftSkillAssessments');
 const { getAIFeedback } = require('../services/aiService');
 
 const getReadingTest = (req, res) => {
